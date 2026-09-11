@@ -35,7 +35,8 @@ export function AuthForm({ mode, next }: Props) {
             : "Sign in to log rides and see your stats."}
         </CardDescription>
       </CardHeader>
-      <form action={formAction}>
+      {/* The form sits between header and footer, so it has to carry the Card's own gap. */}
+      <form action={formAction} className="flex flex-col gap-6">
         <CardContent>
           <FieldGroup>
             {isSignup && (
