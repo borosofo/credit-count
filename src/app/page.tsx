@@ -58,6 +58,9 @@ function PodiumSpot({ row, place }: { row?: LeaderboardRow; place: 1 | 2 | 3 }) 
             {row.credits}
             <span className="ml-1 font-sans text-xs font-normal text-muted-foreground">credits</span>
           </div>
+          <div className="text-xs text-muted-foreground tabular-nums">
+            {row.rides} {row.rides === 1 ? "ride" : "rides"}
+          </div>
         </>
       ) : (
         <div className="text-xs text-muted-foreground">open spot</div>
