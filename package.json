@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "rls-check": "tsx scripts/rls-check.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

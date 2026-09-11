@@ -27,6 +27,15 @@ Claude Code (Fable 5.1) in VS Code, with the official agent skills installed: `s
 - Sent five clarifying questions to Koin (admin logging rides, merge of duplicates, zero-credit leaderboard entries, email confirmation, repo visibility), each with the default I would apply if unanswered. The brief invites questions; the TDD records the defaults.
 - TDD drafted by Claude Code from the plan, then edited down from four pages to three and rendered to PDF from the Markdown source (Edge headless). Committed as the first commit of the repository.
 
+### 2026-09-10 (evening) — Build, before the database existed
+
+- Tooling: installed `gh` and `vercel` CLIs, created the public repo and the Vercel project, scaffolded Next.js 16.3 with `create-next-app`, initialised shadcn/ui (base-nova preset, Base UI primitives).
+- Read before writing: the Next.js 16 guides bundled in `node_modules/next/dist/docs` (middleware is now `proxy.ts`; caching model changed), the Supabase changelog (from April 2026 new tables are no longer auto-exposed to the Data API, so the migration grants privileges explicitly), the official `with-supabase` example for the `@supabase/ssr` clients, and the installed shadcn component sources rather than remembered APIs.
+- Wrote the three migrations first (schema + RLS + grants, functions, seed) following the Supabase Postgres skill: `auth.uid()` wrapped in `select`, `security definer` only where RLS must be bypassed on purpose, `search_path` pinned, EXECUTE revoked from `public`, indexes on every policy column. Not applied yet: the Supabase project is created in the next session.
+- Wrote the pure `computeStats()` with five Vitest cases before any UI used it.
+- Corrections made to what the AI produced: `rpc().returns<T[]>()` does not type-check without generated types (cast instead); React 19's lint forbids `setState` inside effects, so success side effects moved into the `useActionState` wrapper; `@types/node` had to move to v24 for Vitest 5; `.env.example` was silently ignored by the scaffold's `.env*` rule and needed a `!.env.example` exception; a one-day tolerance was added to the `ridden_on` check because the database runs in UTC and users do not.
+- Verified: `tsc`, `eslint` and `next build` all clean before the commit.
+
 ### Next
 
-Fase 2: migrations first (schema, RLS, functions, seed), each reviewed before `apply_migration`, then auth and the dashboard.
+Create the Supabase project (needs the new organisation), apply the migrations with the MCP connector, run the security advisor, turn off email confirmation, set env vars on Vercel, connect GitHub for auto-deploys, then test end to end and write `scripts/rls-check.ts`.
