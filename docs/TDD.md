@@ -2,8 +2,7 @@
 
 | **Author** | Javier Arias | **Date** | 10 September 2026 |
 |---|---|---|---|
-| **Version** | 1.0 — draft for approval, build not started | **Source** | *Credit Count — Statement of Work, Candidate Task*, Koin Limited, July 2026 |
-| **History** | 1.0 (10 Sep 2026) initial design for approval. An "as built" revision will follow the build and note any deviation. | | |
+| **Version** | 1.0 — draft for approval, build not started. An "as built" revision will follow the build and note any deviation. | **Source** | *Credit Count — Statement of Work, Candidate Task*, Koin Limited, July 2026 |
 
 ## 1. Summary and design principle
 
