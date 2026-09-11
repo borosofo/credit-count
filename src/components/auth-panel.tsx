@@ -5,7 +5,7 @@ import { TrackMotif } from "@/components/track-motif";
 export function AuthPanel() {
   return (
     <aside className="card-glow relative flex min-h-44 flex-col justify-end gap-4 overflow-hidden rounded-2xl border bg-linear-to-br from-card to-background p-6 md:min-h-full">
-      <TrackMotif className="pointer-events-none absolute -right-8 -bottom-3 h-auto w-72 text-primary opacity-30" />
+      <TrackMotif className="pointer-events-none absolute -top-6 -right-10 h-auto w-72 text-primary opacity-30" />
       <p className="relative font-heading text-2xl uppercase tracking-wide">Every coaster counts.</p>
       <ul className="relative flex flex-col gap-2 text-sm text-muted-foreground">
         <li className="flex items-center gap-2">
