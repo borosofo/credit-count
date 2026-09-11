@@ -54,6 +54,12 @@ Claude Code (Fable 5.1) in VS Code, with the official agent skills installed: `s
 - **Visual pass, my call, not the AI's.** The SOW says the app "should not feel like a prototype"; the first cut was a neutral shadcn skin. I asked for something that feels like a game about coasters. The AI pulled three directions from its design database and mocked them up with the real demo numbers; I picked the dark "Neon Night" and asked for a matching light mode instead of a single theme. What shipped: tokens for both modes with a shared violet-to-rose hero, Russo One for numbers and headings, Chakra Petch for text, a system-default theme toggle, credit tiers (Rookie → Century Club) with a progress bar, medals on the leaderboard, colour-coded type badges, count-up numbers that respect reduced motion, and a toast that distinguishes a new credit from a repeat lap. About three hours, no changes to migrations, policies or action authorisation. Tiers are derived on read like every other stat.
 - Caught on the live deployment: a form wrapping the Card content and footer swallowed the Card's gap, so the footer band cut through the password field. Fixed with a one-line class. Headless screenshots on Windows cannot go below roughly 500 px wide, so the phone check is done on a real phone.
 
+### 2026-09-11 (close) — Walkthrough and submission
+
+- After the visual pass I walked the six acceptance criteria myself on the live app, in both themes and on a phone. Two findings, both about discoverability rather than function: as the admin I could not tell where to add, edit or delete a coaster. Row actions were ghost buttons that disappeared on the dark theme and the catalogue page gave no hint that administration existed. Fixed with outlined, iconed actions, a red Delete, and a "Manage catalogue" entry for admins.
+- TDD revised to v1.1 "as built": same design, plus the changes listed in its §7 (catalogue size, tiers and themes, the one-day date tolerance, the demo seed script, next-themes, and the Vercel deployment-protection finding). Still three pages.
+- What I would tell a colleague about working this way: write the design before the code and commit it, because the AI will happily build first; read the generated SQL line by line, because that is where a mistake becomes a leak; make the AI prove access control through the API instead of trusting the policies it wrote; and check the live deployment, not just the build, because two of the real problems (deployment protection, a placeholder email domain) only existed there.
+
 ### Next
 
-Walk the six acceptance criteria on the restyled app in both themes, then the TDD "as built" revision and the submission email.
+Submit: TDD PDF, live URL, the two test accounts, repository link. Book the review call.

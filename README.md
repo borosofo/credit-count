@@ -35,7 +35,8 @@ update public.profiles set role = 'admin' where id = '<auth user id>';
 | `npm run dev` / `npm run build` / `npm start` | Next.js as usual |
 | `npm run lint` / `npm run typecheck` | ESLint / `tsc --noEmit` |
 | `npm test` | Vitest: the pure `computeStats()` behind the dashboard |
-| `npm run rls-check` | Signs up two throwaway users with the publishable key and proves, through the API, that nobody can read or change another user's rides, that enthusiasts cannot touch the catalogue, and that a visitor can read only the leaderboard (AC2, AC4) |
+| `npm run rls-check` | Signs up two throwaway users with the publishable key and proves, through the API, that nobody can read or change another user's rides, that enthusiasts cannot touch the catalogue, and that a visitor can read only the leaderboard (AC2, AC4). 20 checks; passing against production. |
+| `npm run seed-demo` | Creates the review accounts and their rides through the normal sign-up flow (credentials from the environment, see the script header). Re-runnable. |
 
 ## Project map
 
@@ -51,4 +52,17 @@ scripts/rls-check.ts   the access-control proof described above
 
 ## Acceptance criteria (SOW §8)
 
-To be recorded here after the deployed app is walked through: sign-up and rides on three coasters with one repeat (AC1); cross-user isolation through the UI and `npm run rls-check` (AC2); leaderboard as a signed-out visitor (AC3); enthusiast vs admin on the catalogue (AC4); no secrets in client code or repository (AC5); TDD matches what shipped (AC6).
+Walked through on the deployed app on 11 September 2026, in both themes, on desktop and on a phone.
+
+| # | Criterion | How it was checked |
+|---|---|---|
+| AC1 | New user signs up, logs rides on three coasters including one repeat, sees credits, rides and stats update | Fresh account through the UI; three coasters, one twice: credits 3, rides 4, stats by country, manufacturer and type and most-ridden updated without a manual refresh. |
+| AC2 | A second user cannot view, edit or delete the first user's rides, in the UI or by direct API calls | UI: a second account sees only its own history. API: `npm run rls-check`, 20/20 (cross-user select returns nothing; update and delete touch zero rows; inserting on someone else's behalf is refused). |
+| AC3 | Leaderboard visible signed out, only opted-in users, display name and credit count only | Signed-out visit shows the opted-in accounts only; the private demo user never appears; the RPC exposes rank, display name, credits and rides, nothing else. |
+| AC4 | Enthusiast cannot add, edit or delete catalogue entries by any means; admin can | UI: no admin entry points for enthusiasts and `/admin/coasters` redirects them. API: `rls-check` (insert refused, update and delete affect zero rows, `merge_coaster` refused). Admin account adds, edits, merges and deletes. |
+| AC5 | No secrets in client code or the repository | Only the publishable key is used; it lives in `.env.local` (ignored) and Vercel. `git grep` for `service_role`, `sb_secret`, JWTs and the demo passwords returns nothing in tracked files. |
+| AC6 | TDD describes what was built; deviations flagged | `docs/TDD.md` v1.1 "as built", §7 lists every change from the approved v1.0. No deviation from the SOW. |
+
+## Design notes
+
+Two themes, "Neon Day" and "Neon Night", follow the system preference with a toggle in the header. Credit tiers (Rookie 1 · Thrill Seeker 5 · Coaster Hunter 10 · Track Legend 25 · Century Club 50), leaderboard medals and colour-coded coaster types are presentation over the same derived data; nothing about them is stored.
