@@ -60,6 +60,8 @@ Claude Code (Fable 5.1) in VS Code, with the official agent skills installed: `s
 - TDD revised to v1.1 "as built": same design, plus the changes listed in its §7 (catalogue size, tiers and themes, the one-day date tolerance, the demo seed script, next-themes, and the Vercel deployment-protection finding). Still three pages.
 - What I would tell a colleague about working this way: write the design before the code and commit it, because the AI will happily build first; read the generated SQL line by line, because that is where a mistake becomes a leak; make the AI prove access control through the API instead of trusting the policies it wrote; and check the live deployment, not just the build, because two of the real problems (deployment protection, a placeholder email domain) only existed there.
 
+- Second visual round, again my call: a podium leaderboard with ranked bars and a park-themed decoration kit. I chose vectors only (lucide icons plus an SVG track motif) over AI-generated images: consistent in both themes, zero weight, no licensing questions. To highlight the reader’s own row without exposing ids, `get_leaderboard()` gained an `is_you` boolean computed from `auth.uid()` inside the function; `rls-check` grew to 24 checks to prove it is false for visitors and for other users, and that opting out removes the row at once.
+
 ### Next
 
 Submit: TDD PDF, live URL, the two test accounts, repository link. Book the review call.
