@@ -61,7 +61,7 @@ Walked through on the deployed app on 11 September 2026, in both themes, on desk
 | AC3 | Leaderboard visible signed out, only opted-in users, display name and credit count only | Signed-out visit shows the opted-in accounts only; the private demo user never appears; the RPC exposes rank, display name, credits, rides and an is-you flag (true only for the caller), nothing else. |
 | AC4 | Enthusiast cannot add, edit or delete catalogue entries by any means; admin can | UI: no admin entry points for enthusiasts and `/admin/coasters` redirects them. API: `rls-check` (insert refused, update and delete affect zero rows, `merge_coaster` refused). Admin account adds, edits, merges and deletes. |
 | AC5 | No secrets in client code or the repository | Only the publishable key is used; it lives in `.env.local` (ignored) and Vercel. `git grep` for `service_role`, `sb_secret`, JWTs and the demo passwords returns nothing in tracked files. |
-| AC6 | TDD describes what was built; deviations flagged | `docs/TDD.md` v1.1 "as built", §7 lists every change from the approved v1.0. No deviation from the SOW. |
+| AC6 | TDD describes what was built; deviations flagged | `docs/TDD.md` v1.2 "as built", §8 lists every change from the approved v1.0. No deviation from the SOW. |
 
 ## Design notes
 
