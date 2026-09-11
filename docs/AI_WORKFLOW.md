@@ -36,6 +36,16 @@ Claude Code (Fable 5.1) in VS Code, with the official agent skills installed: `s
 - Corrections made to what the AI produced: `rpc().returns<T[]>()` does not type-check without generated types (cast instead); React 19's lint forbids `setState` inside effects, so success side effects moved into the `useActionState` wrapper; `@types/node` had to move to v24 for Vitest 5; `.env.example` was silently ignored by the scaffold's `.env*` rule and needed a `!.env.example` exception; a one-day tolerance was added to the `ridden_on` check because the database runs in UTC and users do not.
 - Verified: `tsc`, `eslint` and `next build` all clean before the commit.
 
+### 2026-09-11 — Database, first deploy, first real findings
+
+- Created the Supabase project through the MCP connector (cost confirmed at 0 USD/month) and applied the three migrations in order, unchanged from the reviewed files. Verified with SQL that the effective grants match the TDD table exactly: `anon` has no table privileges at all, `authenticated` can update only `display_name` and `show_on_leaderboard` on `profiles`, RLS is on for all three tables, 44 coasters seeded across 12 countries.
+- Security advisor: four warnings, all "SECURITY DEFINER function is executable" for `get_leaderboard` (anon, authenticated), `is_admin` and `merge_coaster` (authenticated). All intentional and already explained in TDD §4: the leaderboard function is the visitor's only entry point and returns an aggregate; `is_admin` only reports the caller's own role; `merge_coaster` re-checks `is_admin()` inside. Accepted, recorded here rather than silenced.
+- Environment variables set on Vercel (production, preview, development) with the publishable key only. GitHub connected; the first push produced a production deployment.
+- Two things the AI could not have known without checking against reality:
+  - Supabase Auth **rejects `example.com` addresses**, so `rls-check.ts` now creates throwaway users as plus-aliases of a real mailbox (`RLS_CHECK_EMAIL`).
+  - The Vercel project came with **Vercel Authentication set to "all except custom domains"**, which sent every visitor of the `.vercel.app` URL to a Vercel login. Changed to "preview deployments only" via the project API; production is public now.
+- Email confirmation is still on in the new project (Supabase default); sign-up returns no session until Javier turns it off in the dashboard. `rls-check` and the demo accounts wait on that.
+
 ### Next
 
-Create the Supabase project (needs the new organisation), apply the migrations with the MCP connector, run the security advisor, turn off email confirmation, set env vars on Vercel, connect GitHub for auto-deploys, then test end to end and write `scripts/rls-check.ts`.
+Turn off email confirmation and set the Site URL (dashboard), run `npm run rls-check` against production, walk through the six acceptance criteria on the live app, create the demo accounts and data, then the TDD "as built" revision.
