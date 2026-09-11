@@ -32,10 +32,16 @@ loadEnvLocal();
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-if (!url || !key) {
-  console.error("Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (see .env.example).");
+// Supabase Auth rejects placeholder domains such as example.com, so throwaway
+// users are plus-aliases of a real mailbox you control: RLS_CHECK_EMAIL=you@host.
+const emailBase = process.env.RLS_CHECK_EMAIL;
+if (!url || !key || !emailBase?.includes("@")) {
+  console.error(
+    "Set NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY and RLS_CHECK_EMAIL (see .env.example).",
+  );
   process.exit(2);
 }
+const [emailUser, emailHost] = emailBase.split("@");
 
 // --- tiny test harness -------------------------------------------------------
 
@@ -53,7 +59,7 @@ function client(): SupabaseClient {
 
 async function signUpThrowaway(label: string) {
   const supabase = client();
-  const email = `rls-check+${Date.now()}-${label}@example.com`;
+  const email = `${emailUser}+rls-${Date.now()}-${label}@${emailHost}`;
   const password = `Rls-check-${Math.random().toString(36).slice(2)}-A1!`;
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -169,10 +175,11 @@ async function main() {
 
   const failed = results.filter((r) => !r.pass);
   console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
-  process.exit(failed.length ? 1 : 0);
+  // exitCode instead of exit(): lets open connections drain (avoids a libuv assertion on Windows).
+  process.exitCode = failed.length ? 1 : 0;
 }
 
 main().catch((e) => {
-  console.error(e);
-  process.exit(1);
+  console.error(e instanceof Error ? e.message : e);
+  process.exitCode = 1;
 });
