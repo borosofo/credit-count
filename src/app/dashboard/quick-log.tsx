@@ -36,7 +36,12 @@ export function QuickLog({ coasters }: { coasters: CoasterOption[] }) {
     async (prev, formData) => {
       const result = await logRide(prev, formData);
       if (result.ok) {
-        toast.add({ type: "success", title: "Ride logged", description: "Your stats are up to date." });
+        const name = selected?.name ?? "That coaster";
+        toast.add(
+          result.newCredit
+            ? { type: "success", title: "New credit unlocked", description: `${name} joins your count.` }
+            : { type: "success", title: "Another lap logged", description: `${name} again. Rides up, credits unchanged.` },
+        );
         setSelected(null);
         setFormKey((k) => k + 1); // remount the form so date and note reset
       }

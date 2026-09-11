@@ -3,7 +3,7 @@ import { requireUser } from "@/lib/auth";
 import type { Coaster } from "@/lib/stats";
 import { createClient } from "@/lib/supabase/server";
 import { LogRideDialog } from "@/components/log-ride-dialog";
-import { Badge } from "@/components/ui/badge";
+import { TypeBadge } from "@/components/type-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
@@ -86,9 +86,7 @@ export default async function CoastersPage(props: PageProps<"/coasters">) {
                     <TableCell className="hidden sm:table-cell">{c.country}</TableCell>
                     <TableCell className="hidden md:table-cell">{c.manufacturer}</TableCell>
                     <TableCell className="hidden sm:table-cell">
-                      <Badge variant="secondary" className="capitalize">
-                        {c.type}
-                      </Badge>
+                      <TypeBadge type={c.type} />
                     </TableCell>
                     <TableCell className="text-right">
                       <LogRideDialog coaster={{ id: c.id, name: c.name, park: c.park }} />

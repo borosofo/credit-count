@@ -12,6 +12,8 @@ export type ActionState = {
   error?: string;
   /** Changes on every successful submit so forms can reset themselves. */
   stamp?: number;
+  /** logRide only: true when this ride added a credit, false for a repeat. */
+  newCredit?: boolean;
 };
 
 // The server runs in UTC; a user west or east of it may legitimately be one
@@ -40,6 +42,15 @@ export async function logRide(_prev: ActionState, formData: FormData): Promise<A
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Check the form" };
 
   const supabase = await createClient();
+
+  // Is this a new credit or another lap? RLS scopes the lookup to the user's own rides.
+  const { data: earlier } = await supabase
+    .from("rides")
+    .select("id")
+    .eq("coaster_id", parsed.data.coasterId)
+    .limit(1);
+  const newCredit = !earlier?.length;
+
   // user_id comes from the verified session, never from the form. RLS
   // (WITH CHECK user_id = auth.uid()) would reject anything else anyway.
   const { error } = await supabase.from("rides").insert({
@@ -51,7 +62,7 @@ export async function logRide(_prev: ActionState, formData: FormData): Promise<A
   if (error) return { error: friendlyDbError(error) };
 
   revalidateRideViews();
-  return { ok: true, stamp: Date.now() };
+  return { ok: true, stamp: Date.now(), newCredit };
 }
 
 const updateSchema = rideSchema.omit({ coasterId: true }).extend({ id: z.uuid() });

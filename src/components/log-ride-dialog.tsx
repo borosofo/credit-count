@@ -29,7 +29,11 @@ export function LogRideDialog({ coaster }: Props) {
     async (prev, formData) => {
       const result = await logRide(prev, formData);
       if (result.ok) {
-        toast.add({ type: "success", title: `Logged a ride on ${coaster.name}` });
+        toast.add(
+          result.newCredit
+            ? { type: "success", title: "New credit unlocked", description: `${coaster.name} joins your count.` }
+            : { type: "success", title: "Another lap logged", description: `${coaster.name} again. Rides up, credits unchanged.` },
+        );
         setOpen(false);
       }
       return result;

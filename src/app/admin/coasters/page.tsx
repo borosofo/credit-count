@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import type { Coaster } from "@/lib/stats";
 import { createClient } from "@/lib/supabase/server";
 import { AddCoasterDialog, DeleteCoasterDialog, EditCoasterDialog, MergeCoasterDialog } from "./coaster-dialogs";
-import { Badge } from "@/components/ui/badge";
+import { TypeBadge } from "@/components/type-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -62,9 +62,7 @@ export default async function AdminCoastersPage() {
                   <TableCell className="hidden sm:table-cell">{c.country}</TableCell>
                   <TableCell className="hidden md:table-cell">{c.manufacturer}</TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge variant="secondary" className="capitalize">
-                      {c.type}
-                    </Badge>
+                    <TypeBadge type={c.type} />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex flex-wrap justify-end gap-1">
