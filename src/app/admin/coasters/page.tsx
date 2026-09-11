@@ -23,7 +23,7 @@ export default async function AdminCoastersPage() {
     <div className="flex flex-col gap-6">
       <section className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Catalogue admin</h1>
+          <h1 className="text-3xl">Catalogue admin</h1>
           <p className="text-muted-foreground">
             Add, edit and merge coasters. You never see anyone&apos;s ride history here.
           </p>

@@ -27,7 +27,7 @@ export default async function RidesPage() {
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight">My rides</h1>
+        <h1 className="text-3xl">My rides</h1>
         <p className="text-muted-foreground">
           Every ride you have logged, newest first. Only you can see this list.
         </p>

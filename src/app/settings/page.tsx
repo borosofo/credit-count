@@ -14,7 +14,7 @@ export default async function SettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <section>
-        <h1 className="text-3xl font-semibold tracking-tight">Settings</h1>
+        <h1 className="text-3xl">Settings</h1>
         <p className="text-muted-foreground">Signed in as {user.email}</p>
       </section>
 

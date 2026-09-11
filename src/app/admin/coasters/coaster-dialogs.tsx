@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { GitMergeIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -119,7 +120,10 @@ export function AddCoasterDialog() {
   const { open, setOpen, state, formAction, pending } = useDialogAction(createCoaster, "Coaster added");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>Add coaster</DialogTrigger>
+      <DialogTrigger render={<Button className="btn-glow" />}>
+        <PlusIcon data-icon="inline-start" />
+        Add coaster
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a coaster</DialogTitle>
@@ -145,7 +149,10 @@ export function EditCoasterDialog({ coaster }: { coaster: Coaster }) {
   const { open, setOpen, state, formAction, pending } = useDialogAction(updateCoaster, "Coaster updated");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="ghost" />}>Edit</DialogTrigger>
+      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+        <PencilIcon data-icon="inline-start" />
+        Edit
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit coaster</DialogTitle>
@@ -175,7 +182,10 @@ export function MergeCoasterDialog({ coaster, candidates }: { coaster: Coaster; 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="ghost" />}>Merge</DialogTrigger>
+      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+        <GitMergeIcon data-icon="inline-start" />
+        Merge
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Merge &ldquo;{coaster.name}&rdquo; into another coaster</DialogTitle>
@@ -235,7 +245,8 @@ export function DeleteCoasterDialog({ coaster }: { coaster: Coaster }) {
   const { open, setOpen, state, formAction, pending } = useDialogAction(deleteCoaster, "Coaster deleted");
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger render={<Button size="sm" variant="ghost" className="text-destructive" />}>
+      <AlertDialogTrigger render={<Button size="sm" variant="destructive" />}>
+        <Trash2Icon data-icon="inline-start" />
         Delete
       </AlertDialogTrigger>
       <AlertDialogContent>

@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -52,7 +53,10 @@ export function EditRideDialog({ ride }: { ride: RideSummary }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="ghost" />}>Edit</DialogTrigger>
+      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+        <PencilIcon data-icon="inline-start" />
+        Edit
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit ride</DialogTitle>
@@ -100,7 +104,8 @@ export function DeleteRideDialog({ ride }: { ride: RideSummary }) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger render={<Button size="sm" variant="ghost" className="text-destructive" />}>
+      <AlertDialogTrigger render={<Button size="sm" variant="destructive" />}>
+        <Trash2Icon data-icon="inline-start" />
         Delete
       </AlertDialogTrigger>
       <AlertDialogContent>

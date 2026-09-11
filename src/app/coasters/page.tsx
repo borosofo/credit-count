@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { requireUser } from "@/lib/auth";
+import Link from "next/link";
+import { WrenchIcon } from "lucide-react";
+import { getProfile, requireUser } from "@/lib/auth";
 import type { Coaster } from "@/lib/stats";
 import { createClient } from "@/lib/supabase/server";
 import { LogRideDialog } from "@/components/log-ride-dialog";
 import { TypeBadge } from "@/components/type-badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
@@ -21,6 +23,7 @@ function matches(c: Coaster, q: string) {
 
 export default async function CoastersPage(props: PageProps<"/coasters">) {
   await requireUser();
+  const profile = await getProfile();
   const { q: rawQ } = await props.searchParams;
   const q = (typeof rawQ === "string" ? rawQ : "").trim().toLowerCase();
 
@@ -35,11 +38,19 @@ export default async function CoastersPage(props: PageProps<"/coasters">) {
 
   return (
     <div className="flex flex-col gap-6">
-      <section>
-        <h1 className="text-3xl font-semibold tracking-tight">Catalogue</h1>
-        <p className="text-muted-foreground">
-          The shared list every credit is counted against. Missing a coaster? Ask an admin.
-        </p>
+      <section className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-3xl">Catalogue</h1>
+          <p className="text-muted-foreground">
+            The shared list every credit is counted against. Missing a coaster? Ask an admin.
+          </p>
+        </div>
+        {profile?.role === "admin" && (
+          <Link href="/admin/coasters" className={buttonVariants({ variant: "outline" })}>
+            <WrenchIcon data-icon="inline-start" />
+            Manage catalogue
+          </Link>
+        )}
       </section>
 
       <Card>
