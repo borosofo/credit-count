@@ -38,7 +38,8 @@ create table public.rides (
   id         uuid primary key default gen_random_uuid(),
   user_id    uuid not null references public.profiles (id) on delete cascade,
   coaster_id uuid not null references public.coasters (id) on delete restrict,
-  ridden_on  date not null default current_date check (ridden_on <= current_date),
+  -- One day of tolerance: the database runs in UTC, users do not.
+  ridden_on  date not null default current_date check (ridden_on <= current_date + 1),
   note       text check (note is null or char_length(note) <= 280),
   created_at timestamptz not null default now()
 );
