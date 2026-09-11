@@ -46,6 +46,14 @@ Claude Code (Fable 5.1) in VS Code, with the official agent skills installed: `s
   - The Vercel project came with **Vercel Authentication set to "all except custom domains"**, which sent every visitor of the `.vercel.app` URL to a Vercel login. Changed to "preview deployments only" via the project API; production is public now.
 - Email confirmation is still on in the new project (Supabase default); sign-up returns no session until Javier turns it off in the dashboard. `rls-check` and the demo accounts wait on that.
 
+### 2026-09-11 (later) — Verification, demo data, and a deliberate visual pass
+
+- Email confirmation off, Site URL set. `npm run rls-check` against production: 20/20 checks pass. Throwaway users deleted afterwards.
+- Demo data through the public API only (`scripts/seed-demo.ts`, credentials from the environment): the two review accounts plus four extra enthusiasts so the leaderboard has a top three and a private user who must never appear. Admin role granted by SQL, as the SOW requires.
+- Questions email sent to Koin with the four defaults; all four are what the build implements.
+- **Visual pass, my call, not the AI's.** The SOW says the app "should not feel like a prototype"; the first cut was a neutral shadcn skin. I asked for something that feels like a game about coasters. The AI pulled three directions from its design database and mocked them up with the real demo numbers; I picked the dark "Neon Night" and asked for a matching light mode instead of a single theme. What shipped: tokens for both modes with a shared violet-to-rose hero, Russo One for numbers and headings, Chakra Petch for text, a system-default theme toggle, credit tiers (Rookie → Century Club) with a progress bar, medals on the leaderboard, colour-coded type badges, count-up numbers that respect reduced motion, and a toast that distinguishes a new credit from a repeat lap. About three hours, no changes to migrations, policies or action authorisation. Tiers are derived on read like every other stat.
+- Caught on the live deployment: a form wrapping the Card content and footer swallowed the Card's gap, so the footer band cut through the password field. Fixed with a one-line class. Headless screenshots on Windows cannot go below roughly 500 px wide, so the phone check is done on a real phone.
+
 ### Next
 
-Turn off email confirmation and set the Site URL (dashboard), run `npm run rls-check` against production, walk through the six acceptance criteria on the live app, create the demo accounts and data, then the TDD "as built" revision.
+Walk the six acceptance criteria on the restyled app in both themes, then the TDD "as built" revision and the submission email.
