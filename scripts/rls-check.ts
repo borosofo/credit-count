@@ -158,15 +158,31 @@ async function main() {
     const keys = board?.[0] ? Object.keys(board[0]).sort().join(",") : "(empty)";
     check("visitor can read the leaderboard", !boardError, boardError?.message);
     check(
-      "leaderboard exposes only rank, display_name, credits, rides",
-      !board?.[0] || keys === "credits,display_name,rank,rides",
+      "leaderboard exposes only rank, display_name, credits, rides, is_you",
+      !board?.[0] || keys === "credits,display_name,is_you,rank,rides",
       keys,
     );
+    check("visitor is never marked as 'you'", !(board ?? []).some((r: { is_you: boolean }) => r.is_you));
     const namesOnBoard = (board ?? []).map((r: { display_name: string }) => r.display_name);
     check(
       "users who did not opt in are absent from the leaderboard",
       !namesOnBoard.some((n: string) => n.startsWith("RLS check")),
     );
+  }
+
+  // --- FR7: opt in, be seen (only as "you" by yourself), opt out, vanish ------
+  {
+    type Row = { display_name: string; is_you: boolean };
+    await a.supabase.from("profiles").update({ show_on_leaderboard: true }).eq("id", a.id);
+    const { data: asA } = await a.supabase.rpc("get_leaderboard");
+    const mineAsA = (asA ?? []).filter((r: Row) => r.display_name === "RLS check a");
+    check("opted-in user appears and is marked as 'you' for themselves", mineAsA.length === 1 && mineAsA[0].is_you === true);
+    const { data: asB } = await b.supabase.rpc("get_leaderboard");
+    const aSeenByB = (asB ?? []).filter((r: Row) => r.display_name === "RLS check a");
+    check("the same row is not 'you' for another user", aSeenByB.length === 1 && aSeenByB[0].is_you === false);
+    await a.supabase.from("profiles").update({ show_on_leaderboard: false }).eq("id", a.id);
+    const { data: after } = await anon.rpc("get_leaderboard");
+    check("opting out removes the user immediately", !(after ?? []).some((r: Row) => r.display_name === "RLS check a"));
   }
 
   // --- cleanup: A deletes their own ride ---------------------------------------

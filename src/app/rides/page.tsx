@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RollerCoasterIcon } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/dates";
 import type { RideWithCoaster } from "@/lib/stats";
@@ -7,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { DeleteRideDialog, EditRideDialog } from "./ride-actions";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const metadata: Metadata = { title: "My rides" };
@@ -42,8 +43,11 @@ export default async function RidesPage() {
           {rides.length === 0 ? (
             <Empty>
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <RollerCoasterIcon />
+                </EmptyMedia>
                 <EmptyTitle>No rides yet</EmptyTitle>
-                <EmptyDescription>Log your first ride from the dashboard.</EmptyDescription>
+                <EmptyDescription>Your first drop is one search away. Log it from the dashboard.</EmptyDescription>
               </EmptyHeader>
               <EmptyContent>
                 <Link href="/dashboard" className={buttonVariants()}>

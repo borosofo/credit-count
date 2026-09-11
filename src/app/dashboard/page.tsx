@@ -4,7 +4,9 @@ import { getProfile, requireUser } from "@/lib/auth";
 import { computeStats, type RideWithCoaster } from "@/lib/stats";
 import { createClient } from "@/lib/supabase/server";
 import { tierFor } from "@/lib/tiers";
+import { TicketIcon } from "lucide-react";
 import { QuickLog, type CoasterOption } from "./quick-log";
+import { TrackMotif } from "@/components/track-motif";
 import { CountUp } from "@/components/count-up";
 import { StatList } from "@/components/stat-list";
 import { TierBadge } from "@/components/tier-badge";
@@ -50,7 +52,8 @@ export default async function DashboardPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
-        <div className="hero-gradient flex flex-col gap-4 rounded-2xl p-6">
+        <div className="hero-gradient isolate relative flex flex-col gap-4 overflow-hidden rounded-2xl p-6">
+          <TrackMotif className="pointer-events-none absolute -right-8 -bottom-3 -z-10 h-auto w-64 opacity-25" />
           <div className="text-xs font-bold tracking-widest uppercase opacity-90">Credits</div>
           <div className="flex flex-wrap items-end justify-between gap-3">
             <CountUp value={stats.credits} className="font-heading text-7xl leading-none" />
@@ -99,7 +102,10 @@ export default async function DashboardPage() {
 
       <Card className="card-glow">
         <CardHeader>
-          <CardTitle>Log a ride</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <TicketIcon className="size-5 text-highlight" aria-hidden="true" />
+            Log a ride
+          </CardTitle>
           <CardDescription>Search the catalogue, pick the coaster, save. Three steps.</CardDescription>
         </CardHeader>
         <CardContent>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RollerCoasterIcon } from "lucide-react";
 import { signOut } from "@/app/(auth)/actions";
 import { getProfile, getSessionUser } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -15,7 +16,8 @@ export async function SiteHeader() {
   return (
     <header className="border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
-        <Link href="/" className="font-heading text-lg uppercase tracking-wider">
+        <Link href="/" className="flex items-center gap-2 font-heading text-lg uppercase tracking-wider">
+          <RollerCoasterIcon className="size-6 text-highlight" aria-hidden="true" />
           Credit Count
         </Link>
 

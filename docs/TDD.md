@@ -18,7 +18,7 @@ Credit Count is a small multi-user web app where rollercoaster enthusiasts log r
 | Front + server | Next.js 16.3, React 19, TypeScript, Tailwind v4, shadcn/ui, Zod, next-themes | Required stack; RSC + Server Actions keep the app small; Zod validates every mutation. |
 | Data + auth | Supabase Auth, Postgres 17, RLS, SQL functions | Required stack; rules live once, in the database. |
 | Hosting | Vercel Hobby (prod = `main`, previews per PR); Supabase Free in `us-east-1`; Vercel functions in `iad1` | Free tiers; app and database in the same region. |
-| Tests | Vitest for stats and tiers; `scripts/rls-check.ts` proves RLS through the API (20 checks) | AC2 and AC4 are demonstrated, not assumed. |
+| Tests | Vitest for stats and tiers; `scripts/rls-check.ts` proves RLS through the API (24 checks) | AC2 and AC4 are demonstrated, not assumed. |
 
 ## 3. Data model
 
@@ -41,7 +41,7 @@ Credit Count is a small multi-user web app where rollercoaster enthusiasts log r
 | `merge_coaster(from, into)` | — | raises unless admin | reassigns rides to the surviving coaster, deletes the duplicate |
 
 - `is_admin()` is `security definer`, `stable`, with a fixed `search_path`, reading `profiles.role`: policies never recurse and a role change applies immediately, no JWT refresh. Admin is granted manually by SQL ("no self-serve admin sign-up").
-- `get_leaderboard()` is the **only** path by which a visitor touches data. It returns `display_name`, `credits` and `rides` (tie-break) for profiles with `show_on_leaderboard = true`, ordered by credits; never user ids or coaster ids, so it cannot reveal what anyone has ridden (FR7). The page renders dynamically, so opting out takes effect on the next request.
+- `get_leaderboard()` is the **only** path by which a visitor touches data. It returns `display_name`, `credits`, `rides` (tie-break) and `is_you` (true only on the caller’s own row, computed from `auth.uid()` inside the function) for profiles with `show_on_leaderboard = true`, ordered by credits; never user ids or coaster ids, so it cannot reveal what anyone has ridden (FR7). The page renders dynamically, so opting out takes effect on the next request.
 - Default table privileges for `anon` and `authenticated` are revoked and re-granted only as above; RLS is enabled on all three tables. Supabase's security advisor flags the `security definer` functions as callable; that is the design, and each one checks `auth.uid()` internally.
 - Only the publishable key ships to the browser (designed to be public; RLS protects the data). The service-role key is never used: the catalogue is seeded by a SQL migration and every account, demo ones included, is created through normal sign-up.
 
@@ -49,7 +49,7 @@ Credit Count is a small multi-user web app where rollercoaster enthusiasts log r
 
 | Route | Access | Content |
 |---|---|---|
-| `/` | public | Leaderboard: medals for the top three, display name, tier, credits |
+| `/` | public | Leaderboard: podium for the top three, then ranked rows with a bar relative to the leader; your own row highlighted |
 | `/signup`, `/login` | public | Email, password, display name at sign-up |
 | `/dashboard` | user | Hero with **credits**, tier and progress to the next tier; total rides; most-ridden coaster; stats by country / manufacturer / type; **Quick log** |
 | `/rides` | user | Ride history: edit date and note, delete with confirmation |
@@ -73,7 +73,7 @@ Credit Count is a small multi-user web app where rollercoaster enthusiasts log r
 | FR6, FR9 ride history private; edit/delete own rides only | RLS on `rides` with USING and WITH CHECK on `user_id = auth.uid()`; proven by `rls-check.ts`. |
 | FR7 leaderboard opt-in, name + credits only, opt-out immediate | `get_leaderboard()` filters on the flag and exposes two fields; dynamic page. |
 | FR8 only admins change the catalogue, at the database layer | `is_admin()` policies on `coasters`; proven by `rls-check.ts`. |
-| AC1–AC4 | Walked through on the live app on 11 September 2026, both themes, desktop and phone; AC2 and AC4 also by `npm run rls-check` (20/20 against production). |
+| AC1–AC4 | Walked through on the live app on 11 September 2026, both themes, desktop and phone; AC2 and AC4 also by `npm run rls-check` (24/24 against production). |
 | AC5, AC6 no secrets; TDD matches the build | `.env*.local` ignored, `.env.example` committed, publishable key only, key grep before submission; this document is the "as built" revision, changes in §7. |
 
 ## 7. Assumptions, open questions and changes since v1.0
@@ -93,7 +93,7 @@ Questions sent to Koin on 11 September 2026, each with the default applied if un
 
 ## 9. Verification, delivery and operations
 
-**Verified before submission:** `tsc`, ESLint and `next build` clean; Vitest (stats and tiers, 9 cases); `rls-check.ts` 20/20 against production (cross-user reads return nothing, cross-user updates and deletes touch zero rows, an enthusiast cannot write to `coasters` or promote themselves, a visitor cannot read `coasters`, `rides` or `profiles`, the leaderboard exposes only rank, name, credits and rides); the six acceptance criteria walked through on the live app. **Migrations** are SQL files under `supabase/migrations`, applied in order through the Supabase MCP connector and committed; the seed is idempotent. **Environment:** `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, set in Vercel and in a local `.env.local`. **Deploy:** GitHub → Vercel Git integration; every push to `main` is production. **Handover:** live Vercel URL, one enthusiast and one admin test account (credentials sent separately, never in the repository), public repository with README, this TDD and `docs/AI_WORKFLOW.md` on how the build was directed with Claude Code.
+**Verified before submission:** `tsc`, ESLint and `next build` clean; Vitest (stats and tiers, 9 cases); `rls-check.ts` 24/24 against production (cross-user reads return nothing, cross-user updates and deletes touch zero rows, an enthusiast cannot write to `coasters` or promote themselves, a visitor cannot read `coasters`, `rides` or `profiles`, the leaderboard exposes only rank, name, credits, rides and an is-you flag; opting in and out is reflected immediately); the six acceptance criteria walked through on the live app. **Migrations** are SQL files under `supabase/migrations`, applied in order through the Supabase MCP connector and committed; the seed is idempotent. **Environment:** `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, set in Vercel and in a local `.env.local`. **Deploy:** GitHub → Vercel Git integration; every push to `main` is production. **Handover:** live Vercel URL, one enthusiast and one admin test account (credentials sent separately, never in the repository), public repository with README, this TDD and `docs/AI_WORKFLOW.md` on how the build was directed with Claude Code.
 
 ## 10. Out of scope and next steps
 

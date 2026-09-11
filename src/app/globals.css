@@ -163,4 +163,22 @@
   .btn-glow {
     box-shadow: var(--primary-glow);
   }
+  /* Leaderboard bars grow from the left on load; static under reduced motion. */
+  .bar-grow {
+    transform-origin: left;
+    animation: grow-x 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes grow-x {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bar-grow {
+      animation: none;
+    }
+  }
 }

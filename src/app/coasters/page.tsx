@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { WrenchIcon } from "lucide-react";
+import { FerrisWheelIcon, WrenchIcon } from "lucide-react";
 import { getProfile, requireUser } from "@/lib/auth";
 import type { Coaster } from "@/lib/stats";
 import { createClient } from "@/lib/supabase/server";
@@ -8,7 +8,7 @@ import { LogRideDialog } from "@/components/log-ride-dialog";
 import { TypeBadge } from "@/components/type-badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -40,7 +40,10 @@ export default async function CoastersPage(props: PageProps<"/coasters">) {
     <div className="flex flex-col gap-6">
       <section className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl">Catalogue</h1>
+          <h1 className="flex items-center gap-3 text-3xl">
+            <FerrisWheelIcon className="size-7 text-highlight" aria-hidden="true" />
+            Catalogue
+          </h1>
           <p className="text-muted-foreground">
             The shared list every credit is counted against. Missing a coaster? Ask an admin.
           </p>
@@ -70,6 +73,9 @@ export default async function CoastersPage(props: PageProps<"/coasters">) {
           {coasters.length === 0 ? (
             <Empty>
               <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FerrisWheelIcon />
+                </EmptyMedia>
                 <EmptyTitle>No coaster matches</EmptyTitle>
                 <EmptyDescription>Try fewer words, or ask an admin to add it to the catalogue.</EmptyDescription>
               </EmptyHeader>
