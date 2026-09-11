@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 274" font-family="Segoe UI, Arial, sans-serif" font-size="10" fill="#1a1a1a">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- auth.users -->
+  <rect x="10" y="8" width="210" height="30" rx="6" fill="#f3f3f3" stroke="#888" stroke-dasharray="4 3"/>
+  <text x="115" y="27" text-anchor="middle" font-size="10"><tspan font-weight="700">auth.users</tspan>  (Supabase Auth, managed)</text>
+  <line x1="115" y1="38" x2="115" y2="66" stroke="#555" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="122" y="56" font-size="8.5" fill="#444">trigger handle_new_user() on insert</text>
+
+  <!-- profiles -->
+  <rect x="10" y="68" width="210" height="122" rx="6" fill="#ffffff" stroke="#555"/>
+  <path d="M16 68 h198 a6 6 0 0 1 6 6 v12 h-210 v-12 a6 6 0 0 1 6 -6 z" fill="#2b2b2b"/>
+  <text x="115" y="81" text-anchor="middle" fill="#ffffff" font-weight="700">profiles</text>
+  <g font-family="Consolas, Courier New, monospace" font-size="9.2">
+    <text x="18" y="103">id uuid PK = auth.users.id</text>
+    <text x="18" y="118">display_name text 2–40</text>
+    <text x="18" y="133">role enthusiast | admin</text>
+    <text x="18" y="148">show_on_leaderboard bool = false</text>
+    <text x="18" y="163">created_at timestamptz</text>
+  </g>
+  <text x="18" y="182" font-size="8.5" fill="#666">role changes only by SQL; API can update 2 columns</text>
+
+  <!-- rides -->
+  <rect x="275" y="68" width="210" height="140" rx="6" fill="#ffffff" stroke="#555"/>
+  <path d="M281 68 h198 a6 6 0 0 1 6 6 v12 h-210 v-12 a6 6 0 0 1 6 -6 z" fill="#2b2b2b"/>
+  <text x="380" y="81" text-anchor="middle" fill="#ffffff" font-weight="700">rides</text>
+  <g font-family="Consolas, Courier New, monospace" font-size="9.2">
+    <text x="283" y="103">id uuid PK</text>
+    <text x="283" y="118">user_id → profiles (cascade)</text>
+    <text x="283" y="133">coaster_id → coasters (restrict)</text>
+    <text x="283" y="148">ridden_on date ≤ today + 1</text>
+    <text x="283" y="163">note text ≤ 280, nullable</text>
+    <text x="283" y="178">created_at timestamptz</text>
+  </g>
+  <text x="283" y="198" font-size="8.5" fill="#666">indexes: (user_id) (user_id, coaster_id) (coaster_id)</text>
+
+  <!-- coasters -->
+  <rect x="540" y="68" width="210" height="140" rx="6" fill="#ffffff" stroke="#555"/>
+  <path d="M546 68 h198 a6 6 0 0 1 6 6 v12 h-210 v-12 a6 6 0 0 1 6 -6 z" fill="#2b2b2b"/>
+  <text x="645" y="81" text-anchor="middle" fill="#ffffff" font-weight="700">coasters</text>
+  <g font-family="Consolas, Courier New, monospace" font-size="9.2">
+    <text x="548" y="103">id uuid PK</text>
+    <text x="548" y="118">name, park text</text>
+    <text x="548" y="133">country, manufacturer text</text>
+    <text x="548" y="148">type steel | wooden | hybrid</text>
+    <text x="548" y="163">rcdb_id int null (future sync)</text>
+    <text x="548" y="178">created_at, updated_at</text>
+  </g>
+  <text x="548" y="198" font-size="8.5" fill="#666">unique (lower(name), lower(park))</text>
+
+  <!-- relations -->
+  <line x1="220" y1="120" x2="275" y2="120" stroke="#555" stroke-width="1.5"/>
+  <text x="226" y="115" font-size="9" fill="#444">1</text>
+  <text x="264" y="115" font-size="9" fill="#444">n</text>
+  <text x="247" y="132" text-anchor="middle" font-size="8.5" fill="#444">logs</text>
+  <line x1="485" y1="135" x2="540" y2="135" stroke="#555" stroke-width="1.5"/>
+  <text x="491" y="130" font-size="9" fill="#444">n</text>
+  <text x="529" y="130" font-size="9" fill="#444">1</text>
+  <text x="512" y="147" text-anchor="middle" font-size="8.5" fill="#444">against</text>
+
+  <!-- functions and derived data -->
+  <rect x="10" y="222" width="740" height="46" rx="6" fill="#f7f7f7" stroke="#bbb"/>
+  <text x="18" y="236" font-size="9.5"><tspan font-weight="700">Functions</tspan> (security definer, search_path pinned, EXECUTE granted explicitly, each checks auth.uid() inside):</text>
+  <text x="18" y="249" font-size="9.5">get_leaderboard() for anon + authenticated · is_admin() and merge_coaster(from, into) for authenticated only.</text>
+  <text x="18" y="262" font-size="9.5"><tspan font-weight="700">Derived, never stored:</tspan> credits = distinct coasters per user · rides = rows · stats by country / manufacturer / type · tiers · leaderboard rank.</text>
+</svg>

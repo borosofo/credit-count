@@ -13,16 +13,16 @@ const pdfPath = join(root, "docs", "TDD.pdf");
 const htmlPath = join(tmpdir(), "credit-count-tdd.html");
 
 const css = `
-@page { size: A4; margin: 12mm 13mm 13mm 13mm; }
+@page { size: A4; margin: 11mm 12mm 12mm 12mm; }
 * { box-sizing: border-box; }
-html { font-size: 9.5pt; }
-body { font-family: "Segoe UI", Inter, Arial, sans-serif; color: #1a1a1a; line-height: 1.28; margin: 0; }
+html { font-size: 9.1pt; }
+body { font-family: "Segoe UI", Inter, Arial, sans-serif; color: #1a1a1a; line-height: 1.25; margin: 0; }
 h1 { font-size: 18pt; margin: 0 0 5pt; letter-spacing: -0.2pt; }
-h2 { font-size: 11.2pt; margin: 8pt 0 2.5pt; padding-bottom: 1.5pt; border-bottom: 1.5pt solid #f5c400; page-break-after: avoid; }
+h2 { font-size: 11pt; margin: 7pt 0 2pt; padding-bottom: 1.5pt; border-bottom: 1.5pt solid #f5c400; page-break-after: avoid; }
 p { margin: 0 0 4pt; text-align: left; }
 ul { margin: 0 0 4pt 14pt; padding: 0; }
-li { margin: 0 0 2pt; }
-table { border-collapse: collapse; width: 100%; margin: 2pt 0 5pt; font-size: 8.5pt; page-break-inside: auto; }
+li { margin: 0 0 1.5pt; }
+table { border-collapse: collapse; width: 100%; margin: 2pt 0 4pt; font-size: 8.1pt; page-break-inside: auto; }
 th, td { border: 0.6pt solid #c9c9c9; padding: 2.5pt 4.5pt; vertical-align: top; text-align: left; }
 th { background: #2b2b2b; color: #fff; font-weight: 600; }
 th code { background: transparent; color: #fff; }
@@ -35,9 +35,16 @@ body > table:first-of-type { font-size: 8.9pt; }
 body > table:first-of-type th { background: #fafafa; color: #1a1a1a; font-weight: 400; border: 0.6pt solid #c9c9c9; }
 body > table:first-of-type th:nth-child(odd), body > table:first-of-type td:nth-child(odd) { width: 11%; background: #f3f3f3; font-weight: 600; }
 body > table:first-of-type td:nth-child(2) { width: 39%; }
+.diagram { margin: 2pt auto 4pt; width: 86%; page-break-inside: avoid; }
+.diagram svg { width: 100%; height: auto; display: block; }
 `;
 
-const body = marked.parse(readFileSync(mdPath, "utf8"), { gfm: true });
+// Inline the SVG diagrams so the print HTML is self-contained (GitHub renders the same files as images).
+const body = String(marked.parse(readFileSync(mdPath, "utf8"), { gfm: true })).replace(
+  /<img src="([^"]+\.svg)"[^>]*>/g,
+  (_, src) =>
+    `<div class="diagram">${readFileSync(join(root, "docs", src), "utf8").replace(/<\?xml[^>]*>/, "")}</div>`,
+);
 writeFileSync(
   htmlPath,
   `<!doctype html><html><head><meta charset="utf-8"><title>Credit Count TDD</title><style>${css}</style></head><body>${body}</body></html>`,
