@@ -13,9 +13,16 @@ export async function GET(request: Request) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("get_leaderboard");
-  if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  // The first request after a quiet spell can hit a cold path and time out at
+  // the gateway; a couple of retries with a short pause turn that into a ping.
+  let lastError = "";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    const { error } = await supabase.rpc("get_leaderboard");
+    if (!error) {
+      return NextResponse.json({ ok: true, attempt, at: new Date().toISOString() });
+    }
+    lastError = error.message;
+    await new Promise((r) => setTimeout(r, 1500 * attempt));
   }
-  return NextResponse.json({ ok: true, at: new Date().toISOString() });
+  return NextResponse.json({ ok: false, error: lastError }, { status: 500 });
 }
